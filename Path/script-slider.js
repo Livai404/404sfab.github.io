@@ -1,45 +1,45 @@
 (() => {
-    const pagesCount = 2;
-    const blocsPerPage = 4;
+    const ALL_MISSIONS = window.__MISSIONS__ || [];
+
+    const BADGE = '0001';
+    const missions = ALL_MISSIONS.filter(
+        m => m.personnel?.badge === BADGE
+    );
+
+    console.log('[DASHBOARD] missions totales:', ALL_MISSIONS.length);
+    console.log('[DASHBOARD] missions badge 0001:', missions.length);
 
     const pagesWrapper = document.getElementById('pages-wrapper');
-    const pageNumber = document.getElementById('pageNumber');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
 
-    const missions = window.__MISSIONS__ || [];
-    let currentPage = 0;
+    /* ===============================
+       CONFIG SIMPLE
+    =============================== */
+    const pagesCount = 1;
+    const blocsPerPage = 4;
 
     function createTable() {
         const table = document.createElement('table');
         table.className = 'missions-table';
 
-        const colgroup = document.createElement('colgroup');
-        for (let i = 0; i < 7; i++) {
-            const col = document.createElement('col');
-            col.style.width = '10px';
-            colgroup.appendChild(col);
-        }
-        table.appendChild(colgroup);
-
-        const thead = document.createElement('thead');
-        thead.innerHTML = `
-            <tr class="badge-header">
-                <th colspan="7">Missions</th>
-            </tr>
-            <tr>
-                <th>Fiche</th>
-                <th>Train</th>
-                <th>Support</th>
-                <th>Tournée</th>
-                <th>Nb UL</th>
-                <th>Poids</th>
-                <th>État</th>
-            </tr>
+        table.innerHTML = `
+            <thead>
+                <tr class="badge-header">
+                    <th colspan="7">Badge : 0001</th>
+                </tr>
+                <tr>
+                    <th>Fiche</th>
+                    <th>Train</th>
+                    <th>Support</th>
+                    <th>Tournée</th>
+                    <th>Nb UL</th>
+                    <th>Poids</th>
+                    <th>État</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
         `;
-        table.appendChild(thead);
 
-        const tbody = document.createElement('tbody');
+        const tbody = table.querySelector('tbody');
 
         missions.forEach(m => {
             const tr = document.createElement('tr');
@@ -55,7 +55,6 @@
             tbody.appendChild(tr);
         });
 
-        table.appendChild(tbody);
         return table;
     }
 
@@ -70,8 +69,8 @@
             page.appendChild(bloc);
         }
 
-        page.style.gridTemplateColumns = `repeat(2, 1fr)`;
-        page.style.gridTemplateRows = `repeat(${Math.ceil(blocsPerPage / 2)}, 1fr)`;
+        page.style.gridTemplateColumns = 'repeat(2, 1fr)';
+        page.style.gridTemplateRows = 'repeat(2, 1fr)';
 
         return page;
     }
@@ -79,26 +78,4 @@
     for (let i = 0; i < pagesCount; i++) {
         pagesWrapper.appendChild(createPage());
     }
-
-    function updateSlider() {
-        const pageHeight = pagesWrapper.children[0].clientHeight;
-        pagesWrapper.style.transform = `translateY(${-currentPage * pageHeight}px)`;
-        pageNumber.textContent = `Page ${currentPage + 1} / ${pagesCount}`;
-    }
-
-    prevBtn.addEventListener('click', () => {
-        if (currentPage > 0) {
-            currentPage--;
-            updateSlider();
-        }
-    });
-
-    nextBtn.addEventListener('click', () => {
-        if (currentPage < pagesCount - 1) {
-            currentPage++;
-            updateSlider();
-        }
-    });
-
-    updateSlider();
 })();
